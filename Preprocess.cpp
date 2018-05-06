@@ -167,7 +167,7 @@ void Preprocess::splitData(bool reshufleObjects,double firstSubsetPerc, double s
     for( int i = 0; i < serveFile->getNumberOfObjects(); i++)
         objectIndex.push_back(i);
 
-    int fIndex, sIndex; // index that values must be swaped
+    int firstIndex, secondIndex; // index that values must be swaped
     int tmp;
 
     if (reshufleObjects)
@@ -176,12 +176,12 @@ void Preprocess::splitData(bool reshufleObjects,double firstSubsetPerc, double s
         for (int i = 0; i < objectNumber * 5; i++)
         {
             //generate indexes
-            fIndex = HelperMethods::getRrandomInRange(0, objectNumber);
-            sIndex = HelperMethods::getRrandomInRange(0, objectNumber);
+            firstIndex = HelperMethods::getRrandomInRange(0, objectNumber);
+            secondIndex = HelperMethods::getRrandomInRange(0, objectNumber);
             //change index order
-            tmp = objectIndex.at(fIndex);
-            objectIndex.at(fIndex) = objectIndex.at(sIndex);
-            objectIndex.at(sIndex) = tmp;
+            tmp = objectIndex.at(firstIndex);
+            objectIndex.at(firstIndex) = objectIndex.at(secondIndex);
+            objectIndex.at(secondIndex) = tmp;
         }
     }
 

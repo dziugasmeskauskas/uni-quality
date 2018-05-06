@@ -144,16 +144,16 @@ void Preprocess::splitData(bool reshufleObjects,double firstSubsetPerc, double s
     LOG (INFO) << "Initiaing data split. Got parameters reshufleObjects - "<< reshufleObjects <<" firstSubsetPerc - " <<firstSubsetPerc << " secondSubsetPerc - "<< secondSubsetPerc;
 
    // ServeRequest::tmpDataVector.resize(serveFile->getNumberOfAttributes());
-    int objNo = serveFile->getNumberOfObjects();
+    int objectNumber = serveFile->getNumberOfObjects();
 
-    std::vector<int> objIndex;
-    objIndex.reserve(objNo);
+    std::vector<int> objectIndex;
+    objectIndex.reserve(objectNumber);
 
-    int firstCount = ceil(firstSubsetPerc / 100.0 * objNo);  //qtt of vectors in first set
-    int secondCount = ceil(secondSubsetPerc / 100.0 * objNo);                //qtt of vectors in second set
+    int firstCount = ceil(firstSubsetPerc / 100.0 * objectNumber);  //qtt of vectors in first set
+    int secondCount = ceil(secondSubsetPerc / 100.0 * objectNumber);                //qtt of vectors in second set
 
-    if ((firstCount + secondCount) > objNo)
-            secondCount -= objNo - (firstCount + secondCount);
+    if ((firstCount + secondCount) > objectNumber)
+            secondCount -= objectNumber - (firstCount + secondCount);
 
   //  ServeRequest::writeData.resize(firstCount, ServeRequest::tmpDataVector);
    // Preprocess::writeClass.resize(firstCount);
@@ -165,7 +165,7 @@ void Preprocess::splitData(bool reshufleObjects,double firstSubsetPerc, double s
 
     //initialize vector with index values
     for( int i = 0; i < serveFile->getNumberOfObjects(); i++)
-        objIndex.push_back(i);
+        objectIndex.push_back(i);
 
     int fIndex, sIndex; // index that values must be swaped
     int tmp;
@@ -173,35 +173,35 @@ void Preprocess::splitData(bool reshufleObjects,double firstSubsetPerc, double s
     if (reshufleObjects)
     {
         //chanege index order
-        for (int i = 0; i < objNo * 5; i++)
+        for (int i = 0; i < objectNumber * 5; i++)
         {
             //generate indexes
-            fIndex = HelperMethods::getRrandomInRange(0, objNo);
-            sIndex = HelperMethods::getRrandomInRange(0, objNo);
+            fIndex = HelperMethods::getRrandomInRange(0, objectNumber);
+            sIndex = HelperMethods::getRrandomInRange(0, objectNumber);
             //change index order
-            tmp = objIndex.at(fIndex);
-            objIndex.at(fIndex) = objIndex.at(sIndex);
-            objIndex.at(sIndex) = tmp;
+            tmp = objectIndex.at(fIndex);
+            objectIndex.at(fIndex) = objectIndex.at(sIndex);
+            objectIndex.at(sIndex) = tmp;
         }
     }
 
     for (int i = 0; i < firstCount + secondCount; i++)
     {
-       //std::cout << i;
+
         for (int j = 0; j < serveFile->getNumberOfAttributes(); j++)
-            ServeRequest::tmpDataVector.push_back(serveFile->getDoubleDataAt((objIndex.at(i)),j));
+            ServeRequest::tmpDataVector.push_back(serveFile->getDoubleDataAt((objectIndex.at(i)),j));
 
         if (i < firstCount)
         {
             if (serveFile->isClassFound())
-                Preprocess::writeClass.push_back(serveFile->getStringClass().at(objIndex.at(i)));
-            ServeRequest::writeData.push_back(ServeRequest::tmpDataVector);
+                Preprocess::writeClass.push_back(serveFile->getStringClass().at(objectIndex.at(i)));
+                ServeRequest::writeData.push_back(ServeRequest::tmpDataVector);
         }
         else
         {
             if (serveFile->isClassFound())
-                secondClass.push_back(serveFile->getStringClass().at(objIndex.at(i)));
-            secondData.push_back(ServeRequest::tmpDataVector);
+                secondClass.push_back(serveFile->getStringClass().at(objectIndex.at(i)));
+                secondData.push_back(ServeRequest::tmpDataVector);
         }
         ServeRequest::tmpDataVector.clear();
     }

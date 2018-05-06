@@ -223,9 +223,11 @@ void Preprocess::transposeData()
     std::vector<std::string> attrNames;
     std::string tmp = "attr";
 
+
     for (int i = 0; i < serveFile->getNumberOfObjects(); i++) //rows becomes attributes
     {
-        tmp.append(std::to_string(static_cast<long long>(i+1)));
+        //memory optimization
+        tmp.append(std::to_string(static_cast<long>(i+1)));
         tmp.append(" NUMERIC");
         attrNames.push_back(tmp);
         tmp = "attr";

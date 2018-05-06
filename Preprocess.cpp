@@ -19,7 +19,6 @@
 Preprocess::Preprocess(InitDamisService* initFile):ServeRequest(initFile)
 {
     LOG (INFO) << "Data preprocessing has been called";
-//pakeista
 altOutFile = NULL;
 
 // Preprocess::writeClass.reserve(0);
@@ -98,7 +97,7 @@ void Preprocess::normData(bool normMeanStd, double a, double b)
     ServeRequest::tmpDataVector.reserve(serveFile->getNumberOfObjects()); //norms each columns not row, thus initialize elements for total row number
     ServeRequest::writeData.reserve(serveFile->getNumberOfObjects());
 
-    for (int i = 0; i < serveFile->getNumberOfObjects(); i++) //need to calculate mean and std for each attribute in every row
+    for (int i = 0; i < serveFile->getNumberOfObjects(); i++)
     {
         for (int j = 0; j < serveFile->getNumberOfAttributes(); j++)
             ServeRequest::tmpDataVector.push_back(serveFile->getDoubleData().at(i).at(j));
@@ -106,7 +105,7 @@ void Preprocess::normData(bool normMeanStd, double a, double b)
         ServeRequest::writeData.push_back(ServeRequest::tmpDataVector);
         ServeRequest::tmpDataVector.clear();
     }
-    //gal galima atsisakyti 6i8 dviej7 cikl7
+
 
     for (int i = 0; i < serveFile->getNumberOfAttributes(); i++) //need to calculate mean and std for each attribute in every row
     {
@@ -251,7 +250,12 @@ void Preprocess::transposeData()
 void Preprocess::cleanData()
 {
     LOG (INFO) << "Initiating data cleaning";
-    this->writeDataToFile(outFile->getFilePath(), prepareDataSection(serveFile->getDoubleData(), serveFile->getStringClass()),prepareAttributeSection(serveFile->getAttributeName(),serveFile->getAttributeType(),serveFile->getStringClassAttribute()));
+    this->writeDataToFile(outFile->getFilePath(),
+                          prepareDataSection(serveFile->getDoubleData(),
+                                             serveFile->getStringClass()),
+                          prepareAttributeSection(serveFile->getAttributeName(),
+                                                  serveFile->getAttributeType(),
+                                                  serveFile->getStringClassAttribute()));
 }
 
 Preprocess::~Preprocess()

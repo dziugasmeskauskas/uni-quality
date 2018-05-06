@@ -34,61 +34,62 @@ void Preprocess::filterData(bool retFilteredData, double zValue, int attrIndex)
 {
     LOG (INFO) << "Initiating filter data function. Got parameters retFilteredData - " << retFilteredData <<" zValue - " << zValue<< " attrIndex - " << attrIndex;
 
-    attrIndex = attrIndex - 1; //clumn indexing starts at 0
+    if (attrIndex < 1){
+        LOG (INFO) << "Attribute could not be 0";
+    }else {
+        attrIndex = attrIndex - 1;
 
-    std::vector<int> exObjIndex;
-    int noOfObjects = serveFile->getNumberOfObjects();
-    exObjIndex.reserve(0);
+        std::vector<int> exObjIndex;
+        int noOfObjects = serveFile->getNumberOfObjects();
+        exObjIndex.reserve(0);
 
-    ServeRequest::tmpDataVector.reserve(noOfObjects);
+        ServeRequest::tmpDataVector.reserve(noOfObjects);
 
-    //double mean = 0;
-    double stdev = 0;
+        //double mean = 0;
+        double stdev = 0;
 
-    for (int j = 0; j < noOfObjects; j++)
-        ServeRequest::tmpDataVector.push_back(serveFile->getDoubleDataAt(j, attrIndex));
+        for (int j = 0; j < noOfObjects; j++)
+            ServeRequest::tmpDataVector.push_back(serveFile->getDoubleDataAt(j, attrIndex));
 
-    //mean = HelperMethods::getMean(DamisService::tmpDataVector);
-    stdev = HelperMethods::getStd(ServeRequest::tmpDataVector); //daliname is N o ne is N-1
+        //mean = HelperMethods::getMean(DamisService::tmpDataVector);
+        stdev = HelperMethods::getStd(ServeRequest::tmpDataVector); //daliname is N o ne is N-1
 
-    for (int i = 0; i < noOfObjects; i++)
-        if (fabs(ServeRequest::tmpDataVector.at(i)) > zValue * stdev)
-            exObjIndex.push_back(i);
+        for (int i = 0; i < noOfObjects; i++)
+            if (fabs(ServeRequest::tmpDataVector.at(i)) > zValue * stdev)
+                exObjIndex.push_back(i);
 
-    ServeRequest::tmpDataVector.clear();
+        ServeRequest::tmpDataVector.clear();
 
-    bool skip;
-
-    for (int i = 0; i < noOfObjects; i++)
-    {
-        skip = false;
-        for (int z = 0; z < exObjIndex.size(); z++)
-            if (i == exObjIndex.at(z))
-            {
-                skip = true;
-                break;
-            }
-
-        for (int j = 0; j < serveFile->getNumberOfAttributes(); j++)
+        bool skip = false; //init for safety
+        for (int i = 0; i < noOfObjects; i++)
         {
-            if (retFilteredData && !skip)
-                ServeRequest::tmpDataVector.push_back(serveFile->getDoubleDataAt(i,j));
-            else if (!retFilteredData && skip)
-                ServeRequest::tmpDataVector.push_back(serveFile->getDoubleDataAt(i, j));
-            else
-                 break;
-        }
-        if (!ServeRequest::tmpDataVector.empty())
+            skip = false
+            for (int z = 0; z < exObjIndex.size(); z++)
+                if (i == exObjIndex.at(z))
+                {
+                    skip = true;
+                    break;
+                }
+
+            for (int j = 0; j < serveFile->getNumberOfAttributes(); j++)
             {
-                if (serveFile->isClassFound())
-                    Preprocess::writeClass.push_back(serveFile->getStringClass().at(i));
-                ServeRequest::writeData.push_back(ServeRequest::tmpDataVector);
-
-                ServeRequest::tmpDataVector.clear();
+                if (retFilteredData && !skip || !retFilteredData && skip)
+                    ServeRequest::tmpDataVector.push_back(serveFile->getDoubleDataAt(i,j));
+                else
+                     break;
             }
-    }
+            if (!ServeRequest::tmpDataVector.empty())
+                {
+                    if (serveFile->isClassFound())
+                        Preprocess::writeClass.push_back(serveFile->getStringClass().at(i));
+                        ServeRequest::writeData.push_back(ServeRequest::tmpDataVector);
 
-    this->writeDataToFile(outFile->getFilePath(),prepareDataSection(ServeRequest::writeData, Preprocess::writeClass), prepareAttributeSection(serveFile->getAttributeName(),serveFile->getAttributeType(),serveFile->getStringClassAttribute()));
+                    ServeRequest::tmpDataVector.clear();
+                }
+        }
+
+        this->writeDataToFile(outFile->getFilePath(),prepareDataSection(ServeRequest::writeData, Preprocess::writeClass), prepareAttributeSection(serveFile->getAttributeName(),serveFile->getAttributeType(),serveFile->getStringClassAttribute()));
+    }
 }
 
 void Preprocess::normData(bool normMeanStd, double a, double b)

@@ -27,12 +27,13 @@ void Statistics::statPrimitives()
 
     std::vector<std::string> attrNames;
     std::string tmp;
+    std::string NUMERIC = " NUMERIC";
 
-        tmp = "min";tmp.append(" NUMERIC"); attrNames.push_back(tmp);
-        tmp = "max"; tmp.append(" NUMERIC"); attrNames.push_back(tmp);
-        tmp = "mean"; tmp.append(" NUMERIC"); attrNames.push_back(tmp);
-        tmp = "std"; tmp.append(" NUMERIC"); attrNames.push_back(tmp);
-        tmp = "median"; tmp.append(" NUMERIC"); attrNames.push_back(tmp);
+        tmp = "min";tmp.append(NUMERIC); attrNames.push_back(tmp);
+        tmp = "max"; tmp.append(NUMERIC); attrNames.push_back(tmp);
+        tmp = "mean"; tmp.append(NUMERIC); attrNames.push_back(tmp);
+        tmp = "std"; tmp.append(NUMERIC); attrNames.push_back(tmp);
+        tmp = "median"; tmp.append(NUMERIC); attrNames.push_back(tmp);
 
 
     std::vector<std::string> dummy;
